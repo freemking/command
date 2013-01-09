@@ -1,13 +1,16 @@
 多个github帐号的SSH key切换
 github使用SSH与客户端连接。如果是单用户（first），生成密钥对后，将公钥保存至github，每次连接时SSH客户端发送本地私钥（默认~/.ssh/id_rsa）到服务端验证。单用户情况下，连接的服务器上保存的公钥和发送的私钥自然是配对的。但是如果是多用户（first，second），我们在连接到second的帐号时，second保存的是自己的公钥，但是SSH客户端依然发送默认私钥，即first的私钥，那么这个验证自然无法通过。不过，要实现多帐号下的SSH
 key切换在客户端做一些配置即可。
+
 首先cd到~/.ssh 使用 ssh-keygen -t -rsa -C ‘second@mail.com’ 生成新的SSH
 key：id_rsa_second，生成完后将新的SSH public key添加到github。
 ssh-keygen -t -rsa -C 'second@mail.com'
+
 默认SSH只会读取id_rsa，所以为了让SSH识别新的私钥，需要将其添加到SSH agent
 ssh-add ～/.ssh/id_rsa_second
 该命令如果报错：Could not open a connection to your authentication
 agent.无法连接到ssh agent，可执行ssh-agent bash命令后再执行ssh-add命令。
+
 完成以上步骤后在~/.ssh目录创建config文件，该文件用于配置私钥对应的服务器。内容如下：
 # Default github user(first@mail.com)
 Host github.com
